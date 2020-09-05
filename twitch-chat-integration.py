@@ -56,7 +56,7 @@ while True:
         message = message.strip()
         message = message.replace(" ", "-")
         if message in possible_moves:
-            # r = requests.get(request_URL + message)
+            r = requests.get(request_URL + message)
             print(request_URL + message)
         else:
             sendMessage("Unknown Command")
