@@ -49,14 +49,14 @@ def getData(line):
 '''
 
 # Send request to move the robot
-request_URL = '192.168.1.1'
+request_URL = 'http://192.168.1.1'
 def moveForward():
     print("Moving Forward")
     r = requests.get(request_URL + '/forward')
 
 def moveBack():
     print("Moving Backwards")
-    r = requests.get(request_URL + '/backwards')
+    r = requests.get(request_URL + '/backward')
 
 def turnRight():
     print("Turning to the right")
