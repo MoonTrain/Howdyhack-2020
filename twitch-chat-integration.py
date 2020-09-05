@@ -38,39 +38,15 @@ def loadingComplete(line):
 def sendMessage(message):
     message = "PRIVMSG #" + CHANNEL + " :" + message + "\n"
     irc.send(message.encode())
-'''
-def getData(line):
-    print("Getting Data")
-    splitUp = line.split(":")
-    message = splitUp[2]
-
-    user = splitUp[1].split("!")[0]
-    return (user, message)
-'''
-
-# Send request to move the robot
-request_URL = 'http://192.168.1.1'
-def moveForward():
-    print("Moving Forward")
-    r = requests.get(request_URL + '/forward')
-
-def moveBack():
-    print("Moving Backwards")
-    r = requests.get(request_URL + '/backward')
-
-def turnRight():
-    print("Turning to the right")
-    r = requests.get(request_URL + '/right')
-
-def turnLeft(): 
-    print("Turning to the left")
-    r = requests.get(request_URL + '/left')
 
 # Connecting to the stream
 joinchat()
 sendMessage("Bot has joined the Channel!")
 
 # Get the messages sent and see if they are a command
+# Send request to move the robot
+request_URL = 'http://192.168.1.1/'
+possible_moves = ['forward', 'backward', 'left', 'right', 'small-forward', 'small-backward', 'small-left', 'small-right', 'large-forward', 'large-backward', 'large-left', 'large-right']
 while True:
     readbuffer = irc.recv(1024).decode()
     for line in readbuffer.split("\n"):
@@ -78,13 +54,9 @@ while True:
             continue
         message = line.split(":")[2]
         message = message.strip()
-        if message == "forward":
-            moveForward()
-        elif message == "backward":
-            moveBack()
-        elif message == "left":
-            turnLeft()
-        elif message == "right":
-            turnRight()
+        message = message.replace(" ", "-")
+        if message in possible_moves:
+            # r = requests.get(request_URL + message)
+            print(request_URL + message)
         else:
             sendMessage("Unknown Command")
