@@ -1,5 +1,8 @@
 # Following tutorial from Ryan Chesler titled "Twitch Pays Pokemon with Python 3.6 Tutorial"
+# "pip install requests" may be necessary to run
+# When modifying for your server change "PASS" "CHANNEL" and "OWNER"
 import socket
+import requests
 
 # Defining the needed variables
 SERVER = "irc.twitch.tv"
@@ -46,22 +49,22 @@ def getData(line):
 '''
 
 # Send request to move the robot
-request_URL = ''
+request_URL = '192.168.1.1'
 def moveForward():
     print("Moving Forward")
-    r = requests.get(request_URL, params={'direction':'forward'})
+    r = requests.get(request_URL + '/forward')
 
 def moveBack():
     print("Moving Backwards")
-    r = requests.get(request_URL, params={'direction':'backwards'})
+    r = requests.get(request_URL + '/backwards')
 
 def turnRight():
     print("Turning to the right")
-    r = requests.get(request_URL, params={'direction':'right'})
+    r = requests.get(request_URL + '/right')
 
 def turnLeft(): 
     print("Turning to the left")
-    r = requests.get(request_URL, params={'direction':'left'})
+    r = requests.get(request_URL + '/left')
 
 # Connecting to the stream
 joinchat()
