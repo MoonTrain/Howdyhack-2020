@@ -14,6 +14,7 @@ irc = socket.socket()
 irc.connect((SERVER, PORT))
 irc.send(("PASS " + PASS + "\n" + "NICK " + NICK + "\n" + "JOIN #" + CHANNEL + "\n").encode())
 
+# Get through the initial connecting comments
 def joinchat():
     while True:
         readbuffer_join = irc.recv(1024)
@@ -23,12 +24,14 @@ def joinchat():
             if (loadingComplete(line)):
                 return
 
+# Determine if the final connecting comment has been reached
 def loadingComplete(line):
     if ('End of /NAMES list' in line):
         return True
     else:
         return False
 
+# Send a string in the Twitch chat
 def sendMessage(message):
     message = "PRIVMSG #" + CHANNEL + " :" + message + "\n"
     irc.send(message.encode())
@@ -42,21 +45,29 @@ def getData(line):
     return (user, message)
 '''
 
+# Send request to move the robot
+request_URL = ''
 def moveForward():
     print("Moving Forward")
+    r = requests.get(request_URL, params={'direction':'forward'})
 
 def moveBack():
     print("Moving Backwards")
+    r = requests.get(request_URL, params={'direction':'backwards'})
 
 def turnRight():
     print("Turning to the right")
+    r = requests.get(request_URL, params={'direction':'right'})
 
 def turnLeft(): 
     print("Turning to the left")
+    r = requests.get(request_URL, params={'direction':'left'})
 
+# Connecting to the stream
 joinchat()
 sendMessage("Bot has joined the Channel!")
 
+# Get the messages sent and see if they are a command
 while True:
     readbuffer = irc.recv(1024).decode()
     for line in readbuffer.split("\n"):
