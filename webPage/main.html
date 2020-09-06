@@ -5,44 +5,44 @@
     </head>
     <body>
         <style>
-            .top {
+            .buttonOver {
+                height: 250px;
+                width: 350px;
+
                 margin: 0;
                 position: absolute;
-                top: 42%;
-                left: 49.2%;
-                -ms-transform: translate(-40%, -50%);
-                transform: translate(-40%, -50%);
-            }
-            
-            .bottom {
-                margin: 0;
-                position: absolute;
-                top: 57%;
+                top: 50%;
                 left: 50%;
                 -ms-transform: translate(-50%, -50%);
                 transform: translate(-50%, -50%);
             }
+            .top {
+                -ms-transform: translateX(29.5%);
+                transform: translateX(29.5%);
+            }
         </style>
 
-        <div class="top">
-            <img id="forward" src="forward-Up.png" alt="forward-Up" usemap="#forward" width="100" height="110">
-            <map name="forward">
-                <area shape="rect" coords="0,0,100,110" alt="up" onclick="buttonClicked('forward')">
-            </map>
-        </div>
-        <div class="bottom">
-            <img id="left" src="left-Up.png" alt="left-Up" usemap="#left" width="100" height="110">
-            <img id="backward" src="backward-Up.png" alt="backward-Up" usemap="#backward" width="100" height="110">
-            <img id="right" src="right-Up.png" alt="right-Up" usemap="#right" width="100" height="110">
-            <map name="left">
-                <area shape="rect" coords="0,0,100,110" alt="left" onclick="buttonClicked('left')">
-            </map>
-            <map name="backward">
-                <area shape="rect" coords="0,0,100,110" alt="backward" onclick="buttonClicked('backward')">
-            </map>
-            <map name="right">
-                <area shape="rect" coords="0,0,100,110" alt="right" onclick="buttonClicked('right')">
-            </map>
+        <div class="buttonOver">
+            <div class="top">
+                <img id="forward" src="forward-Up.png" alt="forward-Up" usemap="#forward" width="100" height="110">
+                <map name="forward">
+                    <area shape="rect" coords="0,0,100,110" alt="up" onclick="buttonClicked('forward')">
+                </map>
+            </div>
+            <div class="bottom">
+                <img id="left" src="left-Up.png" alt="left-Up" usemap="#left" width="100" height="110">
+                <img id="backward" src="backward-Up.png" alt="backward-Up" usemap="#backward" width="100" height="110">
+                <img id="right" src="right-Up.png" alt="right-Up" usemap="#right" width="100" height="110">
+                <map name="left">
+                    <area shape="rect" coords="0,0,100,110" alt="left" onclick="buttonClicked('left')">
+                </map>
+                <map name="backward">
+                    <area shape="rect" coords="0,0,100,110" alt="backward" onclick="buttonClicked('backward')">
+                </map>
+                <map name="right">
+                    <area shape="rect" coords="0,0,100,110" alt="right" onclick="buttonClicked('right')">
+                </map>
+            </div>
         </div>
 
         <script type="text/javascript">
