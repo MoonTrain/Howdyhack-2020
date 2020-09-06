@@ -3,6 +3,7 @@
 # When modifying for your server change "PASS" "CHANNEL" and "OWNER"
 import socket
 import requests
+import time
 
 # Defining the needed variables
 SERVER = "irc.twitch.tv"
@@ -47,6 +48,7 @@ sendMessage("Bot has joined the Channel!")
 # Send request to move the robot
 request_URL = 'http://192.168.1.1/'
 possible_moves = ['forward', 'backward', 'left', 'right', 'cam-low', 'cam-mid', 'cam-high']
+currTime = time.time()
 while True:
     readbuffer = irc.recv(1024).decode()
     for line in readbuffer.split("\n"):
@@ -58,5 +60,5 @@ while True:
         if message in possible_moves:
             r = requests.get(request_URL + message)
             print(request_URL + message)
-        else:
-            sendMessage("Command not recognized")
+    if(time.time()-currTime>60):
+        sendMessage("To control the bot, type in 'forward', 'backward', 'left', or 'right' in order to specify its movement")
