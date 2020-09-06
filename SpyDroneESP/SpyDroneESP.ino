@@ -1,7 +1,10 @@
 #include "esp_camera.h"
 #include <WiFi.h>
 #include <WebServer.h>
+#include "SoftwareSerial.h"
 
+//Init softwareserial for printing to arduino
+//SoftwareSerial sendChar;
 
 //Access Point details
 const char* ssid = "SpyRover";  // Enter SSID here
@@ -15,18 +18,33 @@ IPAddress subnet(255,255,255,0);
 //Init server
 WebServer server(80);
 
-//Initialize led for testing
-uint8_t LED_BUILTIN = 4;
-bool LED_BUILTIN_STATUS = LOW;
-
-
-// Select camera model
+//Init camera
 #define CAMERA_MODEL_AI_THINKER
 
 #include "camera_pins.h"
 
-//const char* ssid = "LAPTOP-JHQHEPNG 0277";
-//const char* password = "4A184p5@";
+#if defined(CAMERA_MODEL_AI_THINKER)
+#define PWDN_GPIO_NUM     32
+#define RESET_GPIO_NUM    -1
+#define XCLK_GPIO_NUM      0
+#define SIOD_GPIO_NUM     26
+#define SIOC_GPIO_NUM     27
+
+#define Y9_GPIO_NUM       35
+#define Y8_GPIO_NUM       34
+#define Y7_GPIO_NUM       39
+#define Y6_GPIO_NUM       36
+#define Y5_GPIO_NUM       21
+#define Y4_GPIO_NUM       19
+#define Y3_GPIO_NUM       18
+#define Y2_GPIO_NUM        5
+#define VSYNC_GPIO_NUM    25
+#define HREF_GPIO_NUM     23
+#define PCLK_GPIO_NUM     22
+
+#else
+#error "Camera model not selected"
+#endif
 
 void startCameraServer();
 
@@ -35,7 +53,6 @@ void setup() {
   Serial.begin(115200);
   Serial.setDebugOutput(true);
 
-  pinMode(LED_BUILTIN, OUTPUT);
 
   //Print info
   Serial.println();
@@ -44,58 +61,56 @@ void setup() {
   Serial.print("password= ");
   Serial.println(password);
 
-//  //Do weird esoteric pin setup
-//  camera_config_t config;
-//  config.ledc_channel = LEDC_CHANNEL_0;
-//  config.ledc_timer = LEDC_TIMER_0;
-//  config.pin_d0 = Y2_GPIO_NUM;
-//  config.pin_d1 = Y3_GPIO_NUM;
-//  config.pin_d2 = Y4_GPIO_NUM;
-//  config.pin_d3 = Y5_GPIO_NUM;
-//  config.pin_d4 = Y6_GPIO_NUM;
-//  config.pin_d5 = Y7_GPIO_NUM;
-//  config.pin_d6 = Y8_GPIO_NUM;
-//  config.pin_d7 = Y9_GPIO_NUM;
-//  config.pin_xclk = XCLK_GPIO_NUM;
-//  config.pin_pclk = PCLK_GPIO_NUM;
-//  config.pin_vsync = VSYNC_GPIO_NUM;
-//  config.pin_href = HREF_GPIO_NUM;
-//  config.pin_sscb_sda = SIOD_GPIO_NUM;
-//  config.pin_sscb_scl = SIOC_GPIO_NUM;
-//  config.pin_pwdn = PWDN_GPIO_NUM;
-//  config.pin_reset = RESET_GPIO_NUM;
-//  config.xclk_freq_hz = 20000000;
-//  config.pixel_format = PIXFORMAT_JPEG;
-//
-//
-//  //init with high specs to pre-allocate larger buffers
-//  if(psramFound()){
-//    config.frame_size = FRAMESIZE_UXGA;
-//    config.jpeg_quality = 10;
-//    config.fb_count = 2;
-//  } else {
-//    config.frame_size = FRAMESIZE_SVGA;
-//    config.jpeg_quality = 12;
-//    config.fb_count = 1;
-//  }
-//
-//
-//  // camera init
-//  esp_err_t err = esp_camera_init(&config);
-//  if (err != ESP_OK) {
-//    Serial.printf("Camera init failed with error 0x%x", err);
-//    return;
-//  }
-//
-//  sensor_t * s = esp_camera_sensor_get();
-//  //initial sensors are flipped vertically and colors are a bit saturated
-//  if (s->id.PID == OV3660_PID) {
-//    s->set_vflip(s, 1);//flip it back
-//    s->set_brightness(s, 1);//up the blightness just a bit
-//    s->set_saturation(s, -2);//lower the saturation
-//  }
-//  //drop down frame size for higher initial frame rate
-//  s->set_framesize(s, FRAMESIZE_QVGA);
+  //Init serial
+//  sendChar.begin(9600, SWSERIAL_8N1, 4,1);
+
+
+  //Camera Setup
+  camera_config_t config;
+  config.ledc_channel = LEDC_CHANNEL_0;
+  config.ledc_timer = LEDC_TIMER_0;
+  config.pin_d0 = Y2_GPIO_NUM;
+  config.pin_d1 = Y3_GPIO_NUM;
+  config.pin_d2 = Y4_GPIO_NUM;
+  config.pin_d3 = Y5_GPIO_NUM;
+  config.pin_d4 = Y6_GPIO_NUM;
+  config.pin_d5 = Y7_GPIO_NUM;
+  config.pin_d6 = Y8_GPIO_NUM;
+  config.pin_d7 = Y9_GPIO_NUM;
+  config.pin_xclk = XCLK_GPIO_NUM;
+  config.pin_pclk = PCLK_GPIO_NUM;
+  config.pin_vsync = VSYNC_GPIO_NUM;
+  config.pin_href = HREF_GPIO_NUM;
+  config.pin_sscb_sda = SIOD_GPIO_NUM;
+  config.pin_sscb_scl = SIOC_GPIO_NUM;
+  config.pin_pwdn = PWDN_GPIO_NUM;
+  config.pin_reset = RESET_GPIO_NUM;
+  config.xclk_freq_hz = 20000000;
+  config.pixel_format = PIXFORMAT_JPEG;
+  //init with high specs to pre-allocate larger buffers
+  if(psramFound()){
+    config.frame_size = FRAMESIZE_UXGA;
+    config.jpeg_quality = 10;
+    config.fb_count = 2;
+  } else {
+    config.frame_size = FRAMESIZE_SVGA;
+    config.jpeg_quality = 12;
+    config.fb_count = 1;
+  }
+  
+  esp_err_t err = esp_camera_init(&config); //Actually initialize
+  if (err != ESP_OK) {
+    Serial.printf("Camera init failed with error 0x%x", err);
+    return;
+  }
+
+  //drop down frame size for higher initial frame rate
+  sensor_t * s = esp_camera_sensor_get();
+  s->set_framesize(s, FRAMESIZE_UXGA);
+
+
+
+
 
   WiFi.softAP(ssid, password);
   WiFi.softAPConfig(local_ip, gateway, subnet);
@@ -112,14 +127,11 @@ void setup() {
   server.begin();
   Serial.println("HTTP server started");
 
-  // startCameraServer();
+  startCameraServer();
 }
 
 void loop() {
   server.handleClient();
-
-  digitalWrite(LED_BUILTIN, LED_BUILTIN_STATUS);
-
   // put your main code here, to run repeatedly:
   delay(100);
 }
@@ -129,19 +141,23 @@ void handle_onConnect() {
 }
 
 void handle_forward() {
-  server.send(200, "text/html", BasicReply("forward")); 
+  server.send(200, "text/html", BasicReply("forward"));
+//  sendChar.println('F');
 }
 
 void handle_backward() {
-  server.send(200, "text/html", BasicReply("backward"));  
+  server.send(200, "text/html", BasicReply("backward")); 
+//  sendChar.println('B');
 }
 
 void handle_left() {
   server.send(200, "text/html", BasicReply("left")); 
+//  sendChar.println('L');
 }
 
 void handle_right() {
   server.send(200, "text/html", BasicReply("right")); 
+//  sendChar.println('R');
 }
 
 void handle_NotFound(){
@@ -157,9 +173,10 @@ String BasicReply(String inputStr){
   htmlOut += "p {font-size: 14px;color: #888;margin-bottom: 10px;}\n";
   htmlOut += "</style>\n";
   htmlOut += "</head>\n";
-  htmlOut += "Spy Rover Online/n";
+  htmlOut += "Spy Rover Online\n<br>";
   htmlOut += "<body>\n";
-  htmlOut += inputStr + "/n";
+  htmlOut += "<img style=\"-webkit-user-select: none;margin: auto;\" src=\"http://192.168.1.1:81/stream\" width=\"530\" height=\"397\"><br>";
+  htmlOut += inputStr + "\n";
   htmlOut += "<body>\n";
   htmlOut += "</html>\n";
   return htmlOut;
