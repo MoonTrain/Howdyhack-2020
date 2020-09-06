@@ -46,7 +46,7 @@ sendMessage("Bot has joined the Channel!")
 # Get the messages sent and see if they are a command
 # Send request to move the robot
 request_URL = 'http://192.168.1.1/'
-possible_moves = ['forward', 'backward', 'left', 'right', 'small-forward', 'small-backward', 'small-left', 'small-right', 'large-forward', 'large-backward', 'large-left', 'large-right']
+possible_moves = ['forward', 'backward', 'left', 'right', 'cam-low', 'cam-mid', 'cam-high']
 while True:
     readbuffer = irc.recv(1024).decode()
     for line in readbuffer.split("\n"):
@@ -59,4 +59,4 @@ while True:
             r = requests.get(request_URL + message)
             print(request_URL + message)
         else:
-            sendMessage("Unknown Command")
+            sendMessage("Command not recognized")
