@@ -67,15 +67,14 @@ void loop() {
       c = 'x';
     }
     
-   if (c =='F') {goForward(255);digitalWrite(LED_BUILTIN, HIGH);}
-   if (c =='B') {goBackward(255);digitalWrite(LED_BUILTIN, LOW);}
-   if (c =='L') {turnLeft(500);}
-   if (c =='R') {turnRight(500);} 
+   if (c =='F') {goForward(200);digitalWrite(LED_BUILTIN, HIGH);}
+   if (c =='B') {goBackward(200);digitalWrite(LED_BUILTIN, LOW);}
+   if (c =='L') {turnLeft(50);}
+   if (c =='R') {turnRight(50);} 
 }
 
 
 void turnLeft(int dur) {
-  analogWrite(en, 255);
   digitalWrite(in1,HIGH);
   digitalWrite(in2, LOW);
   digitalWrite(in3,LOW);
@@ -89,7 +88,6 @@ void turnLeft(int dur) {
 }
 
 void turnRight(int dur) {
-  analogWrite(en, 255);
   digitalWrite(in1,LOW);
   digitalWrite(in2, HIGH);
   digitalWrite(in3,HIGH);
@@ -102,13 +100,12 @@ void turnRight(int dur) {
   digitalWrite(in4,LOW);
 }
 
-void goForward(int speed) {
-  analogWrite(en, speed);
+void goForward(int dur) {
   digitalWrite(in1,HIGH);
   digitalWrite(in2, LOW);
   digitalWrite(in3,HIGH);
   digitalWrite(in4,LOW);
-  delay(1000);
+  delay(dur);
 
   digitalWrite(in1,LOW);
   digitalWrite(in2, LOW);
@@ -116,13 +113,12 @@ void goForward(int speed) {
   digitalWrite(in4,LOW);
 }
 
-void goBackward(int speed) {
-  analogWrite(en, speed);
+void goBackward(int dur) {
   digitalWrite(in1,LOW);
   digitalWrite(in2, HIGH);
   digitalWrite(in3,LOW);
   digitalWrite(in4,HIGH);
-  delay(1000);
+  delay(dur);
 
   digitalWrite(in1,LOW);
   digitalWrite(in2, LOW);
