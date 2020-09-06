@@ -62,3 +62,4 @@ while True:
             print(request_URL + message)
     if(time.time()-currTime>60):
         sendMessage("To control the bot, type in 'forward', 'backward', 'left', or 'right' in order to specify its movement")
+        currTime = time.time()
