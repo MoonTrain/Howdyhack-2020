@@ -1,7 +1,7 @@
 #include "esp_camera.h"
 #include <WiFi.h>
 #include <WebServer.h>
-#include "SoftwareSerial.h"
+// #include "SoftwareSerial.h"
 
 //Init softwareserial for printing to arduino
 //SoftwareSerial sendChar;
@@ -49,21 +49,14 @@ WebServer server(80);
 void startCameraServer();
 
 void setup() {
-  //init serial
-  Serial.begin(115200);
-  Serial.setDebugOutput(true);
+  //Config Output Pins
+  pinMode(12,OUTPUT);
+  pinMode(13,OUTPUT);
+  pinMode(15,OUTPUT);
 
-
-  //Print info
-  Serial.println();
-  Serial.print("ssid= ");
-  Serial.println(ssid);
-  Serial.print("password= ");
-  Serial.println(password);
 
   //Init serial
-//  sendChar.begin(9600, SWSERIAL_8N1, 4,1);
-
+  //sendChar.begin(9600, SWSERIAL_8N1, 4,1);
 
   //Camera Setup
   camera_config_t config;
@@ -100,7 +93,7 @@ void setup() {
   
   esp_err_t err = esp_camera_init(&config); //Actually initialize
   if (err != ESP_OK) {
-    Serial.printf("Camera init failed with error 0x%x", err);
+    // Serial.printf("Camera init failed with error 0x%x", err);
     return;
   }
 
@@ -125,15 +118,13 @@ void setup() {
   server.onNotFound(handle_NotFound);
 
   server.begin();
-  Serial.println("HTTP server started");
+  // Serial.println("HTTP server started");
 
   startCameraServer();
 }
 
 void loop() {
   server.handleClient();
-  // put your main code here, to run repeatedly:
-  delay(100);
 }
 
 void handle_onConnect() {
@@ -142,22 +133,56 @@ void handle_onConnect() {
 
 void handle_forward() {
   server.send(200, "text/html", BasicReply("forward"));
-//  sendChar.println('F');
+  digitalWrite(12, HIGH);
+  digitalWrite(13, HIGH);
+  digitalWrite(15, HIGH);
+
+  delay(30);
+
+  digitalWrite(12, LOW);
+  digitalWrite(13, LOW);
+  digitalWrite(15, LOW);
 }
 
 void handle_backward() {
   server.send(200, "text/html", BasicReply("backward")); 
-//  sendChar.println('B');
-}
+  digitalWrite(12, HIGH);
+  digitalWrite(13, HIGH);
+  digitalWrite(15, LOW);
 
-void handle_left() {
-  server.send(200, "text/html", BasicReply("left")); 
-//  sendChar.println('L');
+  delay(30);
+
+  digitalWrite(12, LOW);
+  digitalWrite(13, LOW);
+  digitalWrite(15, LOW);
+
 }
 
 void handle_right() {
   server.send(200, "text/html", BasicReply("right")); 
-//  sendChar.println('R');
+  digitalWrite(12, HIGH);
+  digitalWrite(13, LOW);
+  digitalWrite(15, HIGH);
+
+  delay(30);
+
+  digitalWrite(12, LOW);
+  digitalWrite(13, LOW);
+  digitalWrite(15, LOW);
+}
+
+void handle_left() {
+  server.send(200, "text/html", BasicReply("left")); 
+  digitalWrite(12, HIGH);
+  digitalWrite(13, LOW);
+  digitalWrite(15, LOW);
+
+  delay(30);
+
+  digitalWrite(12, LOW);
+  digitalWrite(13, LOW);
+  digitalWrite(15, LOW);
+
 }
 
 void handle_NotFound(){
@@ -167,16 +192,17 @@ void handle_NotFound(){
 String BasicReply(String inputStr){
   String htmlOut = "<!DOCTYPE html> <html>\n";
   htmlOut += "<head><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0, user-scalable=no\">\n";
-  htmlOut += "<title>Spy Rover</title>\n";
-  htmlOut += "<style>html { font-family: Helvetica; display: inline-block; margin: 0px auto; text-align: center;}\n";
-  htmlOut += "body{margin-top: 50px;} h1 {color: #444444;margin: 50px auto 30px;} h3 {color: #444444;margin-bottom: 50px;}\n";
-  htmlOut += "p {font-size: 14px;color: #888;margin-bottom: 10px;}\n";
-  htmlOut += "</style>\n";
-  htmlOut += "</head>\n";
-  htmlOut += "Spy Rover Online\n<br>";
-  htmlOut += "<body>\n";
-  htmlOut += "<img style=\"-webkit-user-select: none;margin: auto;\" src=\"http://192.168.1.1:81/stream\" width=\"530\" height=\"397\"><br>";
-  htmlOut += inputStr + "\n";
+  htmlOut += "This is not what you are looking for";
+  // htmlOut += "<title>Spy Rover</title>\n";
+  // htmlOut += "<style>html { font-family: Helvetica; display: inline-block; margin: 0px auto; text-align: center;}\n";
+  // htmlOut += "body{margin-top: 50px;} h1 {color: #444444;margin: 50px auto 30px;} h3 {color: #444444;margin-bottom: 50px;}\n";
+  // htmlOut += "p {font-size: 14px;color: #888;margin-bottom: 10px;}\n";
+  // htmlOut += "</style>\n";
+  // htmlOut += "</head>\n";
+  // htmlOut += "Spy Rover Online\n<br>";
+  // htmlOut += "<body>\n";
+  // htmlOut += "<img style=\"-webkit-user-select: none;margin: auto;\" src=\"http://192.168.1.1:81/stream\" width=\"530\" height=\"397\"><br>";
+  // htmlOut += inputStr + "\n";
   htmlOut += "<body>\n";
   htmlOut += "</html>\n";
   return htmlOut;
