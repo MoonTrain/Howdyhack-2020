@@ -52,6 +52,9 @@ currTime = time.time()
 while True:
     readbuffer = irc.recv(1024).decode()
     for line in readbuffer.split("\n"):
+        if(time.time()-currTime>2):
+            sendMessage("To control the bot, type in 'forward', 'backward', 'left', or 'right' in order to specify its movement")
+            currTime = time.time()
         if (line == ""):
             continue
         message = line.split(":")[2]
@@ -60,6 +63,4 @@ while True:
         if message in possible_moves:
             r = requests.get(request_URL + message)
             print(request_URL + message)
-    if(time.time()-currTime>60):
-        sendMessage("To control the bot, type in 'forward', 'backward', 'left', or 'right' in order to specify its movement")
-        currTime = time.time()
+        
