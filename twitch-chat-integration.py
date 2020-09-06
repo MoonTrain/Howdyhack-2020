@@ -42,19 +42,15 @@ def sendMessage(message):
 
 # Connecting to the stream
 joinchat()
-sendMessage("Bot has joined the Channel!")
+sendMessage("Bot has joined the Channel! Type !help for the commands!")
 
 # Get the messages sent and see if they are a command
 # Send request to move the robot
 request_URL = 'http://192.168.1.1/'
 possible_moves = ['forward', 'backward', 'left', 'right', 'cam-low', 'cam-mid', 'cam-high']
-currTime = time.time()
 while True:
     readbuffer = irc.recv(1024).decode()
     for line in readbuffer.split("\n"):
-        if(time.time()-currTime>2):
-            sendMessage("To control the bot, type in 'forward', 'backward', 'left', or 'right' in order to specify its movement")
-            currTime = time.time()
         if (line == ""):
             continue
         message = line.split(":")[2]
@@ -63,4 +59,6 @@ while True:
         if message in possible_moves:
             r = requests.get(request_URL + message)
             print(request_URL + message)
+        elif message == "!help":
+            sendMessage("To control the bot, type in 'forward', 'backward', 'left', or 'right' in order to specify its movement")
         
