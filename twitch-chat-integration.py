@@ -59,4 +59,4 @@ while True:
             r = requests.get(request_URL + message)
             print(request_URL + message)
         else:
-            sendMessage("Unknown Command")
+            sendMessage("Command not recognized")
